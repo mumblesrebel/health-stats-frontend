@@ -6,7 +6,7 @@ services:
     pullRequestPreviewsEnabled: true
     envVars:
       - key: VITE_API_URL
-        value: https://api.health-stats-tracker.onrender.com
+        value: https://health-stats-api.onrender.com
       - key: VITE_API_TIMEOUT
         value: 30000
       - key: VITE_ENABLE_MOCK_DATA
