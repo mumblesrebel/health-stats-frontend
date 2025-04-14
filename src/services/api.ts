@@ -9,9 +9,9 @@ const api = axios.create({
   timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  },
-  withCredentials: false // Set to false since we're not using cookies
+    'Accept': 'application/json',
+    'Origin': 'https://health-stats-tracker-frontend.onrender.com'
+  }
 })
 
 // Add request interceptor for auth token
