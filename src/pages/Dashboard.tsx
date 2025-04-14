@@ -9,7 +9,7 @@ export function Dashboard() {
   return (
     <div>
       <Typography variant="h4" gutterBottom>
-        Welcome, {user?.name || 'User'}
+        Welcome, {user ? `${user.firstName} ${user.lastName}` : 'User'}
       </Typography>
       <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' } }}>
         <StatsSummary />
