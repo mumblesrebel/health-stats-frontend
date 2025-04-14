@@ -9,8 +9,9 @@ const api = axios.create({
   timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
-  withCredentials: true
+  withCredentials: false // Set to false since we're not using cookies
 })
 
 // Add request interceptor for auth token
