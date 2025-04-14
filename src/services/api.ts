@@ -76,19 +76,27 @@ export const healthApi = {
     console.log('API Service: Request data:', requestData);
     
     try {
-      const response = await apiService.post('/api/auth/register', requestData);
-      console.log('API Service: Full response:', {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers,
-        data: response.data,
-        config: {
-          url: response.config.url,
-          baseURL: response.config.baseURL,
-          method: response.config.method,
-          headers: response.config.headers
-        }
+      const response = await apiService.post('/api/auth/register', requestData, {
+        transformResponse: [(data) => {
+          console.log('API Service: Raw response:', data);
+          try {
+            if (!data) {
+              throw new Error('Empty response');
+            }
+            const parsed = JSON.parse(data);
+            console.log('API Service: Parsed response:', parsed);
+            if (!parsed.token || !parsed.user) {
+              throw new Error('Invalid response format');
+            }
+            return parsed;
+          } catch (e) {
+            console.error('API Service: Response parsing error:', e);
+            throw e;
+          }
+        }]
       });
+
+      console.log('API Service: Final response:', response);
       return response;
     } catch (error: any) {
       console.error('API Service: Registration error:', {
