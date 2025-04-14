@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { mockApi } from '../mocks/mockApi'
 
-const apiUrl = import.meta.env.VITE_API_URL || '/api';
+const apiUrl = 'http://localhost:5000';
 console.log('API Service: Using API URL:', apiUrl);
 
 const api = axios.create({
@@ -10,6 +10,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true
 })
 
 // Add request interceptor for auth token
