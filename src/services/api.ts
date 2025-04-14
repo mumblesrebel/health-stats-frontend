@@ -57,23 +57,23 @@ const apiService = import.meta.env.VITE_ENABLE_MOCK_DATA === 'true' ? mockApi : 
 // API functions
 export const healthApi = {
   // Health records
-  getHealthRecords: () => apiService.get<HealthRecord[]>('/health-records'),
+  getHealthRecords: () => apiService.get<HealthRecord[]>('/api/health-records'),
   createHealthRecord: (data: Omit<HealthRecord, 'id'>) => 
-    apiService.post<HealthRecord>('/health-records', data),
+    apiService.post<HealthRecord>('/api/health-records', data),
   updateHealthRecord: (id: string, data: Partial<HealthRecord>) =>
-    apiService.put<HealthRecord>(`/health-records/${id}`, data),
+    apiService.put<HealthRecord>(`/api/health-records/${id}`, data),
   deleteHealthRecord: (id: string) => 
-    apiService.delete(`/health-records/${id}`),
+    apiService.delete(`/api/health-records/${id}`),
 
   // Authentication
   login: (email: string, password: string) =>
-    apiService.post('/auth/login', { email, password }),
+    apiService.post('/api/auth/login', { email, password }),
   register: async (email: string, password: string, name: string) => {
     const [firstName, ...lastNameParts] = name.split(' ');
     const lastName = lastNameParts.join(' ');
     console.log('Sending registration request:', { email, firstName, lastName });
     try {
-      const response = await apiService.post('/auth/register', { email, password, firstName, lastName });
+      const response = await apiService.post('/api/auth/register', { email, password, firstName, lastName });
       console.log('Registration response:', response);
       return response;
     } catch (error: any) {
