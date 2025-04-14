@@ -47,16 +47,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (email: string, password: string, name: string) => {
     try {
-      const response = await healthApi.register(email, password, name)
-      if (response.data && response.data.token) {
-        localStorage.setItem('token', response.data.token)
-        setUser(response.data.user)
+      console.log('AuthContext: Starting registration...');
+      const response = await healthApi.register(email, password, name);
+      console.log('AuthContext: Got response:', response);
+      
+      if (response?.data?.token) {
+        console.log('AuthContext: Setting token and user...');
+        localStorage.setItem('token', response.data.token);
+        setUser(response.data.user);
       } else {
-        throw new Error('Invalid response from server')
+        console.error('AuthContext: Invalid response structure:', response);
+        throw new Error(`Server response missing token: ${JSON.stringify(response?.data)}`);
       }
-    } catch (error) {
-      console.error('Registration failed:', error)
-      throw error
+    } catch (error: any) {
+      console.error('AuthContext: Registration error:', {
+        error,
+        response: error.response,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      if (error.response?.data?.error) {
+        throw new Error(error.response.data.error);
+      }
+      throw error;
     }
   }
 

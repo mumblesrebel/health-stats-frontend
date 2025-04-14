@@ -1,8 +1,11 @@
 import axios from 'axios'
 import { mockApi } from '../mocks/mockApi'
 
+const apiUrl = import.meta.env.VITE_API_URL || '/api';
+console.log('API Service: Using API URL:', apiUrl);
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: apiUrl,
   timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
   headers: {
     'Content-Type': 'application/json',
