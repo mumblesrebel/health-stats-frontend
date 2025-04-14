@@ -51,8 +51,11 @@ export const healthApi = {
   // Authentication
   login: (email: string, password: string) =>
     apiService.post('/auth/login', { email, password }),
-  register: (email: string, password: string, name: string) =>
-    apiService.post('/auth/register', { email, password, name }),
+  register: (email: string, password: string, name: string) => {
+    const [firstName, ...lastNameParts] = name.split(' ');
+    const lastName = lastNameParts.join(' ');
+    return apiService.post('/auth/register', { email, password, firstName, lastName });
+  },
 }
 
 export default api
