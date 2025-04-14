@@ -11,20 +11,21 @@ import {
 } from '@mui/material'
 import { useAuth } from '../services/AuthContext'
 
-export function Login() {
+export function Register() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { register } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
   const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await login(email, password)
+      await register(email, password, name)
       navigate('/')
     } catch (err) {
-      setError('Invalid email or password')
+      setError('Registration failed. Please try again.')
     }
   }
 
@@ -40,9 +41,21 @@ export function Login() {
       >
         <Paper sx={{ p: 4, width: '100%' }}>
           <Typography component="h1" variant="h5" gutterBottom>
-            Sign in
+            Register
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Full Name"
+              name="name"
+              autoComplete="name"
+              autoFocus
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
             <TextField
               margin="normal"
               required
@@ -51,7 +64,6 @@ export function Login() {
               label="Email Address"
               name="email"
               autoComplete="email"
-              autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -63,7 +75,7 @@ export function Login() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -78,11 +90,11 @@ export function Login() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Register
             </Button>
             <Box sx={{ textAlign: 'center' }}>
-              <Link href="/register" variant="body2">
-                Don't have an account? Register
+              <Link href="/login" variant="body2">
+                Already have an account? Sign in
               </Link>
             </Box>
           </Box>

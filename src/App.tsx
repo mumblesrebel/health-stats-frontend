@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Stats } from './pages/Stats'
 import { Profile } from './pages/Profile'
 import { Login } from './pages/Login'
+import { Register } from './pages/Register'
 import { AuthProvider, useAuth } from './services/AuthContext'
 
 function ProtectedRoute({ children }: { children: ReactElement }) {
@@ -27,6 +28,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="stats" element={<ProtectedRoute><Stats /></ProtectedRoute>} />
