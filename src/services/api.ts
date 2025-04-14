@@ -19,6 +19,20 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
+    console.error('Request interceptor error:', error)
+    return Promise.reject(error)
+  }
+)
+
+// Add response interceptor for error logging
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('Response interceptor error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      config: error.config
+    })
     return Promise.reject(error)
   }
 )
@@ -51,10 +65,18 @@ export const healthApi = {
   // Authentication
   login: (email: string, password: string) =>
     apiService.post('/auth/login', { email, password }),
-  register: (email: string, password: string, name: string) => {
+  register: async (email: string, password: string, name: string) => {
     const [firstName, ...lastNameParts] = name.split(' ');
     const lastName = lastNameParts.join(' ');
-    return apiService.post('/auth/register', { email, password, firstName, lastName });
+    console.log('Sending registration request:', { email, firstName, lastName });
+    try {
+      const response = await apiService.post('/auth/register', { email, password, firstName, lastName });
+      console.log('Registration response:', response);
+      return response;
+    } catch (error: any) {
+      console.error('Registration error:', error.response || error);
+      throw error;
+    }
   },
 }
 
