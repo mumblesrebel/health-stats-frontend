@@ -4,7 +4,9 @@ import { healthApi } from './api'
 interface User {
   id: string
   email: string
-  name: string
+  firstName: string
+  lastName: string
+  role: string
 }
 
 interface AuthContextType {
@@ -46,8 +48,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (email: string, password: string, name: string) => {
     try {
       const response = await healthApi.register(email, password, name)
-      localStorage.setItem('token', response.data.token)
-      setUser(response.data.user)
+      if (response.data && response.data.token) {
+        localStorage.setItem('token', response.data.token)
+        setUser(response.data.user)
+      } else {
+        throw new Error('Invalid response from server')
+      }
     } catch (error) {
       console.error('Registration failed:', error)
       throw error

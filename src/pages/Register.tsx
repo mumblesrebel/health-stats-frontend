@@ -21,11 +21,15 @@ export function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     try {
+      console.log('Attempting registration with:', { email, name })
       await register(email, password, name)
+      console.log('Registration successful')
       navigate('/')
-    } catch (err) {
-      setError('Registration failed. Please try again.')
+    } catch (err: any) {
+      console.error('Registration error:', err)
+      setError(err.response?.data?.error || 'Registration failed. Please try again.')
     }
   }
 
