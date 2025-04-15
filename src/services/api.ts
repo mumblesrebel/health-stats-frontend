@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { mockApi } from '../mocks/mockApi'
 
-const apiUrl = 'https://health-stats-api.onrender.com';
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 console.log('API Service: Using API URL:', apiUrl);
 
 const api = axios.create({
