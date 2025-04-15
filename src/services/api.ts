@@ -6,11 +6,7 @@ console.log('API Service: Using API URL:', apiUrl);
 
 const api = axios.create({
   baseURL: apiUrl,
-  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
+  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000')
 })
 
 // Add request interceptor for auth token
