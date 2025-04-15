@@ -9,8 +9,7 @@ const api = axios.create({
   timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000'),
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Origin': 'https://health-stats-tracker-frontend.onrender.com'
+    'Accept': 'application/json'
   }
 })
 
