@@ -63,6 +63,7 @@ export const healthApi = {
     apiService.delete(`/api/health-records/${id}`),
 
   // Authentication
+  getCurrentUser: () => apiService.get('/api/auth/me'),
   login: (email: string, password: string) =>
     apiService.post('/api/auth/login', { email, password }),
   register: async (email: string, password: string, name: string) => {

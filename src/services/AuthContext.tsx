@@ -24,14 +24,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token')
-    if (token) {
-      // TODO: Implement token validation
-      setLoading(false)
-    } else {
+    const validateToken = async () => {
+      const token = localStorage.getItem('token')
+      if (token) {
+        try {
+          const response = await healthApi.getCurrentUser()
+          setUser(response.data)
+        } catch (error) {
+          console.error('Token validation failed:', error)
+          localStorage.removeItem('token')
+          setUser(null)
+        }
+      }
       setLoading(false)
     }
+
+    validateToken()
   }, [])
 
   const login = async (email: string, password: string) => {
