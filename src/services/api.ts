@@ -30,6 +30,11 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
     throw new Error(data?.error || 'Request failed');
   }
 
+  // For login/register endpoints, data is in response.data
+  if (endpoint.includes('/auth/') && data.data) {
+    return data.data;
+  }
+
   return data;
 }
 
