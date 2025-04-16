@@ -1,4 +1,4 @@
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const apiUrl = import.meta.env.VITE_API_URL || 'https://health-stats-api.onrender.com';
 console.log('API Service: Using API URL:', apiUrl);
 
 interface ApiResponse<T> {
