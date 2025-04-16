@@ -89,32 +89,43 @@ export const healthApi = {
       
       const response = await apiService.post('/api/auth/register', requestData);
       
-      console.log('API Service: Full registration response:', {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers,
-        data: response.data,
-        config: response.config
-      });
+      console.log('API Service: Raw response:', response);
+      console.log('API Service: Response headers:', response.headers);
       
-      if (!response.data) {
+      // Try to parse response data if it's a string
+      let data = response.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+          console.log('API Service: Parsed string response:', data);
+        } catch (e) {
+          console.error('API Service: Failed to parse response string:', e);
+          throw new Error('Invalid JSON response from server');
+        }
+      } else {
+        console.log('API Service: Response data is not a string:', typeof data);
+      }
+      
+      if (!data) {
         console.error('API Service: No response data');
         throw new Error('No response data from server');
       }
 
-      console.log('API Service: Response data type:', typeof response.data);
-      console.log('API Service: Response data keys:', Object.keys(response.data));
+      console.log('API Service: Response data type:', typeof data);
+      console.log('API Service: Response data keys:', Object.keys(data));
       
-      if (!response.data.token) {
+      if (!data.token) {
         console.error('API Service: Missing token in response');
         throw new Error('Missing token in response');
       }
       
-      if (!response.data.user) {
+      if (!data.user) {
         console.error('API Service: Missing user in response');
         throw new Error('Missing user in response');
       }
       
+      // Update response.data with parsed data if needed
+      response.data = data;
       return response;
     } catch (error: any) {
       console.error('API Service: Registration error:', {
