@@ -4,9 +4,19 @@ import { mockApi } from '../mocks/mockApi'
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 console.log('API Service: Using API URL:', apiUrl);
 
+const apiTimeout = parseInt(import.meta.env.VITE_API_TIMEOUT || '30000')
+
 const api = axios.create({
   baseURL: apiUrl,
-  timeout: parseInt(import.meta.env.VITE_API_TIMEOUT || '30000')
+  timeout: apiTimeout,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Accept'
+  },
+  withCredentials: false
 })
 
 // Add request interceptor for auth token
