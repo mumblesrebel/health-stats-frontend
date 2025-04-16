@@ -18,9 +18,12 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
   });
 
   const text = await response.text();
+  console.log('API Response Text:', text);
+  
   let data;
   try {
     data = text ? JSON.parse(text) : null;
+    console.log('API Parsed Data:', data);
   } catch (e) {
     console.error('Error parsing response:', text);
     throw new Error('Invalid response from server');
@@ -30,11 +33,7 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
     throw new Error(data?.error || 'Request failed');
   }
 
-  // For login/register endpoints, data is in response.data
-  if (endpoint.includes('/auth/') && data.data) {
-    return data.data;
-  }
-
+  // For login/register endpoints, the response is already in the right format
   return data;
 }
 
