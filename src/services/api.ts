@@ -69,12 +69,30 @@ export const healthApi = {
   login: async (email: string, password: string) => {
     console.log('API Service: Attempting login for:', email);
     
-    const data = await fetchApi('/api/auth/login', {
+    const response = await fetch(`${apiUrl}/api/auth/login`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ email, password })
     });
     
-    console.log('API Service: Login successful:', data);
+    const text = await response.text();
+    console.log('API Response Text:', text);
+    
+    let data;
+    try {
+      data = text ? JSON.parse(text) : null;
+      console.log('API Parsed Data:', data);
+    } catch (e) {
+      console.error('Error parsing response:', text);
+      throw new Error('Invalid response from server');
+    }
+
+    if (!response.ok) {
+      throw new Error(data?.error || 'Request failed');
+    }
+
     return data;
   },
   register: async (email: string, password: string, name: string) => {
