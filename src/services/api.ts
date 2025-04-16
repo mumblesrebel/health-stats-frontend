@@ -79,11 +79,30 @@ export const healthApi = {
       
       const response = await apiService.post('/api/auth/register', requestData);
       
-      console.log('API Service: Registration response:', response.data);
+      console.log('API Service: Full registration response:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        data: response.data,
+        config: response.config
+      });
       
-      if (!response.data || !response.data.token || !response.data.user) {
-        console.error('API Service: Invalid response structure:', response.data);
-        throw new Error('Invalid response structure from server');
+      if (!response.data) {
+        console.error('API Service: No response data');
+        throw new Error('No response data from server');
+      }
+
+      console.log('API Service: Response data type:', typeof response.data);
+      console.log('API Service: Response data keys:', Object.keys(response.data));
+      
+      if (!response.data.token) {
+        console.error('API Service: Missing token in response');
+        throw new Error('Missing token in response');
+      }
+      
+      if (!response.data.user) {
+        console.error('API Service: Missing user in response');
+        throw new Error('Missing user in response');
       }
       
       return response;
@@ -91,7 +110,13 @@ export const healthApi = {
       console.error('API Service: Registration error:', {
         name: error.name,
         message: error.message,
-        response: error.response?.data
+        response: error.response ? {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          headers: error.response.headers,
+          data: error.response.data
+        } : 'No response',
+        request: error.request ? 'Request made but no response received' : 'Request setup failed'
       });
       throw error;
     }
