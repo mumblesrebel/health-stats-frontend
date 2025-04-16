@@ -81,14 +81,39 @@ export const healthApi = {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
-        }
+        },
+        transformResponse: [(data) => {
+          console.log('API Service: Raw response data:', data);
+          try {
+            if (!data) {
+              console.error('API Service: Empty response data');
+              return null;
+            }
+            const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+            console.log('API Service: Parsed response data:', parsed);
+            return parsed;
+          } catch (e) {
+            console.error('API Service: Failed to parse response:', e);
+            return data;
+          }
+        }]
       });
       
-      console.log('API Service: Registration raw response:', response);
+      console.log('API Service: Final response:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        data: response.data
+      });
       
       // Check if we got a valid response
       if (response.status !== 200 && response.status !== 201) {
         throw new Error(`Registration failed with status ${response.status}`);
+      }
+      
+      if (!response.data || !response.data.token || !response.data.user) {
+        console.error('API Service: Invalid response structure:', response.data);
+        throw new Error('Invalid response structure from server');
       }
       
       return response;
