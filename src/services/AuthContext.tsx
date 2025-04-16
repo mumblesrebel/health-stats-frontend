@@ -42,16 +42,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     validateToken()
   }, [])
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<void> => {
     try {
-      const response = await healthApi.login(email, password)
-      localStorage.setItem('token', response.data.token)
-      setUser(response.data.user)
-    } catch (error) {
-      console.error('Login failed:', error)
-      throw error
+      console.log('AuthContext: Attempting login...');
+      const data = await healthApi.login(email, password);
+      
+      console.log('AuthContext: Login successful:', data);
+      localStorage.setItem('token', data.token);
+      setUser(data.user);
+    } catch (error: any) {
+      console.error('AuthContext: Login failed:', error.message);
+      throw error;
     }
-  }
+  };
 
   const register = async (email: string, password: string, name: string) => {
     try {
