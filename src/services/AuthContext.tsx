@@ -55,50 +55,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (email: string, password: string, name: string) => {
     try {
-      // Registration attempt
       console.log('AuthContext: Starting registration...', { email, name });
-      const registerResponse = await healthApi.register(email, password, name);
-      console.log('AuthContext: Register response status:', registerResponse?.status);
-      console.log('AuthContext: Register response data:', registerResponse?.data);
-      
-      // Wait a moment to ensure the backend has processed the registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await healthApi.register(email, password, name);
+      console.log('AuthContext: Registration response:', {
+        status: response?.status,
+        data: response?.data
+      });
 
-      // Login attempt
-      console.log('AuthContext: Attempting login...', { email });
-      try {
-        const loginResponse = await healthApi.login(email, password);
-        console.log('AuthContext: Login response status:', loginResponse?.status);
-        console.log('AuthContext: Login response data:', loginResponse?.data);
-        
-        if (loginResponse?.data?.token) {
-          console.log('AuthContext: Setting token and user...');
-          localStorage.setItem('token', loginResponse.data.token);
-          setUser(loginResponse.data.user);
-        } else {
-          console.error('AuthContext: Login response missing token:', loginResponse);
-          throw new Error('Login response missing token');
-        }
-      } catch (loginError: any) {
-        console.error('AuthContext: Login failed:', {
-          status: loginError.response?.status,
-          data: loginError.response?.data,
-          message: loginError.message
-        });
-        throw new Error(`Login failed: ${loginError.response?.data?.error || loginError.message}`);
+      if (!response?.data) {
+        throw new Error('No response data from registration');
       }
+
+      // For now, just log the user in automatically with the registration response
+      localStorage.setItem('token', response.data.token);
+      setUser(response.data.user);
     } catch (error: any) {
-      console.error('AuthContext: Registration/Login error:', {
+      console.error('AuthContext: Registration error:', {
         name: error.name,
         message: error.message,
         response: error.response ? {
           status: error.response.status,
           statusText: error.response.statusText,
           data: error.response.data
-        } : 'No response',
-        stack: error.stack
+        } : 'No response'
       });
-      throw error;
+      throw new Error(error.response?.data?.message || error.message);
     }
   }
 
