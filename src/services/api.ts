@@ -70,19 +70,37 @@ export const healthApi = {
     const [firstName, ...lastNameParts] = name.split(' ');
     const lastName = lastNameParts.join(' ');
     const requestData = { email, password, firstName, lastName };
-    console.log('API Service: Sending registration request to:', apiUrl + '/api/auth/register');
-    console.log('API Service: Request data:', requestData);
     
     try {
-      const response = await apiService.post('/api/auth/register', requestData);
-      console.log('API Service: Registration response:', response);
+      console.log('API Service: Sending registration request:', {
+        url: apiUrl + '/api/auth/register',
+        data: requestData
+      });
+      
+      const response = await apiService.post('/api/auth/register', requestData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+      
+      console.log('API Service: Registration raw response:', response);
+      
+      // Check if we got a valid response
+      if (response.status !== 200 && response.status !== 201) {
+        throw new Error(`Registration failed with status ${response.status}`);
+      }
+      
       return response;
     } catch (error: any) {
       console.error('API Service: Registration error:', {
+        name: error.name,
         message: error.message,
+        config: error.config,
         response: error.response ? {
           status: error.response.status,
           statusText: error.response.statusText,
+          headers: error.response.headers,
           data: error.response.data
         } : 'No response',
         request: error.request ? 'Request made but no response received' : 'Request setup failed'
