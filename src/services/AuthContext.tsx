@@ -9,6 +9,11 @@ interface User {
   role: string
 }
 
+interface AuthResponse {
+  token: string
+  user: User
+}
+
 interface AuthContextType {
   user: User | null
   loading: boolean
@@ -29,7 +34,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (token) {
         try {
           const response = await healthApi.getCurrentUser()
-          setUser(response.data)
+          const data = response.data as AuthResponse
+          if (data?.user) {
+            setUser(data.user)
+          } else {
+            throw new Error('Invalid user data')
+          }
         } catch (error) {
           console.error('Token validation failed:', error)
           localStorage.removeItem('token')
@@ -45,11 +55,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<void> => {
     try {
       console.log('AuthContext: Attempting login...');
-      const data = await healthApi.login(email, password);
+      const response = await healthApi.login(email, password);
       
-      console.log('AuthContext: Login successful:', data);
-      localStorage.setItem('token', data.token);
-      setUser(data.user);
+      console.log('AuthContext: Login response:', response);
+      if (!response || !response.token || !response.user) {
+        throw new Error('Invalid response format');
+      }
+      
+      localStorage.setItem('token', response.token);
+      setUser(response.user);
+      console.log('AuthContext: Login successful');
     } catch (error: any) {
       console.error('AuthContext: Login failed:', error.message);
       throw error;
@@ -58,31 +73,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (email: string, password: string, name: string) => {
     try {
-      console.log('AuthContext: Starting registration...', { email, name });
+      console.log('AuthContext: Starting registration...');
       const response = await healthApi.register(email, password, name);
-      console.log('AuthContext: Registration response:', {
-        status: response?.status,
-        data: response?.data
-      });
-
-      if (!response?.data) {
-        throw new Error('No response data from registration');
+      
+      console.log('AuthContext: Registration response:', response);
+      if (!response.token || !response.user) {
+        throw new Error('Invalid registration response format');
       }
-
-      // For now, just log the user in automatically with the registration response
-      localStorage.setItem('token', response.data.token);
-      setUser(response.data.user);
+      
+      localStorage.setItem('token', response.token);
+      setUser(response.user);
+      console.log('AuthContext: Registration successful');
     } catch (error: any) {
-      console.error('AuthContext: Registration error:', {
-        name: error.name,
-        message: error.message,
-        response: error.response ? {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data
-        } : 'No response'
-      });
-      throw new Error(error.response?.data?.message || error.message);
+      console.error('AuthContext: Registration failed:', error.message);
+      throw error;
     }
   }
 
