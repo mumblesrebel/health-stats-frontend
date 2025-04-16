@@ -99,14 +99,30 @@ export const healthApi = {
     const [firstName, ...lastNameParts] = name.split(' ');
     const lastName = lastNameParts.join(' ');
     
-    console.log('API Service: Sending registration request');
-    
-    const data = await fetchApi('/api/auth/register', {
+    const response = await fetch(`${apiUrl}/api/auth/register`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ email, password, firstName, lastName })
     });
     
-    console.log('API Service: Registration successful:', data);
+    const text = await response.text();
+    console.log('API Response Text:', text);
+    
+    let data;
+    try {
+      data = text ? JSON.parse(text) : null;
+      console.log('API Parsed Data:', data);
+    } catch (e) {
+      console.error('Error parsing response:', text);
+      throw new Error('Invalid response from server');
+    }
+
+    if (!response.ok) {
+      throw new Error(data?.error || 'Request failed');
+    }
+
     return data;
   },
 }
