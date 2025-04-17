@@ -25,7 +25,9 @@ export function StatsSummary() {
     const fetchData = async () => {
       try {
         const response = await healthApi.getHealthRecords()
-        setData(response.data)
+        if (response.data) {
+          setData(response.data as HealthRecord[])
+        }
       } catch (error) {
         console.error('Failed to fetch health records:', error)
       } finally {
