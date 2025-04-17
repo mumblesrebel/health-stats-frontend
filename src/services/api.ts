@@ -9,7 +9,8 @@ interface ApiResponse<T> {
 }
 
 async function makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
-  const url = `${apiUrl}${endpoint}`;
+  // Don't append endpoint if it's a full URL
+  const url = endpoint.startsWith('http') ? endpoint : `${apiUrl}${endpoint}`;
   console.log('API Service: Making request to:', url);
   
   try {
@@ -98,7 +99,7 @@ export const healthApi = {
   login: async (email: string, password: string) => {
     console.log('API Service: Attempting login for:', email);
     
-    const response = await makeRequest<AuthResponse>('/api/auth/login', {
+    const response = await makeRequest<AuthResponse>('https://health-stats-api.onrender.com/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password })
     });
@@ -113,7 +114,7 @@ export const healthApi = {
     const [firstName, ...lastNameParts] = name.split(' ');
     const lastName = lastNameParts.join(' ');
     
-    const response = await makeRequest<AuthResponse>('/api/auth/register', {
+    const response = await makeRequest<AuthResponse>('https://health-stats-api.onrender.com/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ email, password, firstName, lastName })
     });
